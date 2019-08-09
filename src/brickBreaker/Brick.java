@@ -10,9 +10,16 @@ public class Brick extends Rectangle {
     Image pic;
     boolean destroyed;
 
+    int movX, movY;
+
+
     Brick(int x, int y, int width, int height, String imageLocation){
         this.x = x;
         this.y = y;
+
+        movX = 3;
+        movY = 3;
+
         this.width = width;
         this.height = height;
 
