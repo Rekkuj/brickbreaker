@@ -10,11 +10,9 @@ public class Brick extends Rectangle {
     Image pic;
     boolean destroyed;
 
-    int posX, posY;
-
-    Brick(int posX, int posY, int width, int height, String imageLocation){
-        this.posX = posX;
-        this.posY = posY;
+    Brick(int x, int y, int width, int height, String imageLocation){
+        this.x = x;
+        this.y = y;
         this.width = width;
         this.height = height;
 
@@ -27,6 +25,6 @@ public class Brick extends Rectangle {
 
     public void draw(Graphics g, Component c) {
         if (!destroyed)
-            g.drawImage(pic, posX, posY, width, height, c);
+            g.drawImage(pic, x, y, width, height, c);
     }
 }
