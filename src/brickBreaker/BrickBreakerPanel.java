@@ -8,11 +8,19 @@ import java.util.ArrayList;
 
 public class BrickBreakerPanel extends JPanel implements KeyListener {
 
-    ArrayList<Brick> bricks = new ArrayList<Brick>();
-    Brick ball = new Brick(237, 435, 25, 25, "ball.png");
-    Brick paddle = new Brick(175,480,150,25,"paddle.png");
+    ArrayList<Brick> bricks;
+    Brick ball;
+    Brick paddle;
 
-    BrickBreakerPanel(){
+    JFrame jFrame, startScreen;
+
+    Thread thread;
+
+    void reset() {
+        bricks = new ArrayList<Brick>();
+        ball = new Brick(237, 435, 25, 25, "ball.png");
+        paddle = new Brick(175,480,150,25,"paddle.png");
+
         for (int i = 0; i < 8; i++)
             bricks.add(new Brick((i*60+2), 0, 60, 25, "blue.png"));
         for (int i = 0; i < 8; i++)
@@ -24,6 +32,26 @@ public class BrickBreakerPanel extends JPanel implements KeyListener {
 
         addKeyListener(this);
         setFocusable(true);
+    }
+
+    BrickBreakerPanel(JFrame jFrame, JFrame startScreen){
+
+        this.jFrame = jFrame;
+        this.startScreen = startScreen;
+
+        reset();
+
+        thread = new Thread(() -> {
+            while(true) {
+                update();
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException err) {
+                    err.printStackTrace();
+                }
+            }
+        });
+        thread.start();
     }
 
     public void paintComponent(Graphics g){
@@ -47,6 +75,13 @@ public class BrickBreakerPanel extends JPanel implements KeyListener {
 
         ball.y += ball.movY;
 
+        if (ball.y > getHeight()) {
+            thread = null;
+            reset();
+            jFrame.setVisible(false);
+            startScreen.setVisible(true);
+        }
+
         bricks.forEach(brick -> {
             if (ball.intersects(brick) && !brick.destroyed) {
                 brick.destroyed = true;
@@ -64,25 +99,13 @@ public class BrickBreakerPanel extends JPanel implements KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-            new Thread(() -> {
-                while(true) {
-                    update();
-                    try {
-                        Thread.sleep(10);
-                    } catch (InterruptedException err) {
-                        err.printStackTrace();
-                    }
-                }
-            }).start();
-        }
 
         if (e.getKeyCode() == KeyEvent.VK_RIGHT && paddle.x < (getWidth() - paddle.width)) {
-            paddle.x += 15;
+            paddle.x += 25;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_LEFT && paddle.x > 1) {
-            paddle.x -= 15;
+            paddle.x -= 25;
         }
     }
 
